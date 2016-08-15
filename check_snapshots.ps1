@@ -3,6 +3,7 @@
   [Parameter(Mandatory=$true)][string]$user, # Username used when logging in to vcenter server
   [Parameter(Mandatory=$true)][string]$password, # Password used when logging in to vcenter server
   [Parameter(Mandatory=$true)][string]$location, # Datacenter, cluster or resource group to use
+  [Parameter(Mandatory=$true)][string]$bu_regexp, # Regexp that identifies backup snapshots
   [Parameter(Mandatory=$true)][int]$agelimit_bu, # Limit in hours when BU snapshots are considered old
   [Parameter(Mandatory=$true)][int]$agelimit_other, # Limit in days when regular snapshots are considered old
   [Parameter(Mandatory=$true)][int]$climit # Limit for how many snapshots one VM may have
@@ -52,7 +53,7 @@ ForEach($vm in $vmachines) {
 
   ForEach($sn in ($vm | get-snapshot)){
 
-    if ($sn.Name -match 'NBU_SNAPSHOT') {
+    if ($sn.Name -match $bu_regexp) {
       $limit = $sn.Created.AddHours($agelimit_bu)
     }
     else {
